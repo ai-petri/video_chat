@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <button onclick="connect();">connect</button>
+    <button onclick="disconnect();">disconnect</button>
+    <br>
+
+    <video></video>
+    <script>
+        var ws = new WebSocket("ws://"+location.host);
+
+        var video = document.querySelector("video");
+
+        var remoteStream = new MediaStream(); 
+    
+        video.srcObject = remoteStream;
+
+       var config = null;//{iceServers: [{urls: 'stun://stun.l.google.com:19302'}]};
+        
+        var connection;
+        var stream;
+
+        init();
+        initConnection();
+
+       ws.onmessage = async message=>
+       {
+           
+           var data = JSON.parse(message.data);
+           console.log(data);
+           if(data.type)
+           {
+                if(data.type == "offer")
+                {
+                    console.log("offer recieved");
+                    
+                    stream.getTracks().forEach(track=>connection.addTrack(track));
+                    connection.setRemoteDescription(new RTCSessionDescription(data));
+                    
+                    var answer = await connection.createAnswer();
+                    await connection.setLocalDescription(answer);
+                    ws.send(JSON.stringify(answer))
+                }
+
+                if(data.type == "answer")
+                {
+                        console.log("answer recieved");
+                        connection.setRemoteDescription(data);
+                }  
+           }
+           if(data.candidate)
+           {
+               
+               connection.addIceCandidate(data).then(()=>{console.log("ice candidate added")}).catch(reason=>console.log(reason));
+           }
+       }
+
+        
+        async function init()
+        {
+            stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
+        }
+
+       function initConnection()
+       {
+            connection = new RTCPeerConnection(config);
+            connection.onicecandidate = e=>
+            {
+                if(e.candidate)
+                {
+                    ws.send(JSON.stringify(e.candidate));
+                }
+            }
+
+            connection.ontrack = e=>
+            {            
+                remoteStream.addTrack(e.track);
+                video.play();
+            }
+
+            connection.oniceconnectionstatechange = e =>
+            {
+                if(connection.iceConnectionState == "disconnected")
+                {
+                    disconnect();
+                }
+            }
+
+       }
+
+       async function connect()
+       {            
+            stream.getTracks().forEach(track=>connection.addTrack(track));
+
+            var offer = await connection.createOffer();
+            await connection.setLocalDescription(offer);
+
+            ws.send(JSON.stringify(offer));
+       } 
+
+       function disconnect()
+       {
+           connection.close();
+           initConnection();
+       }
+    </script>
+</body>
+</html>

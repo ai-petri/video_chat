@@ -1,0 +1,24 @@
+{
+  "name": "video_chat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ai-petri/video_chat.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ai-petri/video_chat/issues"
+  },
+  "homepage": "https://github.com/ai-petri/video_chat#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "ws": "^7.2.5"
+  }
+}
