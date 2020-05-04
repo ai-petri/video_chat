@@ -8,8 +8,6 @@ class UserConnection extends EventTarget
                 super();
                 this.initConnection();
                 this.localStream = stream;
-                this.connected = new CustomEvent("connected", {detail: {stream: this.remoteStream}})
-                this.disconnected = new Event("disconnected");
             }
 
             initConnection()
@@ -37,7 +35,7 @@ class UserConnection extends EventTarget
                         }
                         if(this.connection.iceConnectionState == "connected")
                         {
-                            this.dispatchEvent(this.connected);
+                            this.dispatchEvent(new Event("connected"));
                         }
                     }
 
@@ -83,7 +81,7 @@ class UserConnection extends EventTarget
             disconnect()
             {
                 this.connection.close();
-                this.dispatchEvent(this.disconnected);                
+                this.dispatchEvent(new Event("disconnected"));                
                 this.initConnection();
             }
 

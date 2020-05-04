@@ -43,7 +43,7 @@
             uc.addEventListener("connected", e=>
             {
                 console.log(e);
-                remoteVideo.srcObject = e.detail.stream;
+                remoteVideo.srcObject = uc.remoteStream;
                 remoteVideo.play();
             });
             uc.addEventListener("disconnected", e=>
