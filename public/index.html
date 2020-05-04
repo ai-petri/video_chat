@@ -11,13 +11,18 @@
     <button onclick="uc.disconnect();">disconnect</button>
     <br>
 
-    <video></video>
+    <video id="local_video"></video>
+    <video id="remote_video"></video>
+
     <script src="user_connection.js"></script>
     <script>
         
         var uc; 
 
         var ws = new WebSocket("ws://"+location.host);
+
+        var localVideo = document.querySelector("#local_video");
+        var remoteVideo = document.querySelector("#remote_video");
 
 
        ws.onmessage = async message=>
@@ -32,10 +37,22 @@
         async function init()
         {
             var stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
-            uc = new UserConnection(stream)
+            localVideo.srcObject = stream;
+            localVideo.play();
+            uc = new UserConnection(stream);
+            uc.addEventListener("connected", e=>
+            {
+                console.log(e);
+                remoteVideo.srcObject = e.detail.stream;
+                remoteVideo.play();
+            });
+            uc.addEventListener("disconnected", e=>
+            {
+                remoteVideo.pause();
+            });
         }
 
-        init();
+        document.body.onload = init;
        
     </script>
 </body>

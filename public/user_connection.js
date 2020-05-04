@@ -1,20 +1,20 @@
-class UserConnection
+class UserConnection extends EventTarget
         {
             connection;
             remoteStream;
-            localStream;
-            video;
+            localStream;            
             constructor(stream)
             {
+                super();
                 this.initConnection();
-                this.remoteStream = new MediaStream();
-                this.video = document.createElement("video");
-                this.video.srcObject = this.remoteStream;
                 this.localStream = stream;
+                this.connected = new CustomEvent("connected", {detail: {stream: this.remoteStream}})
+                this.disconnected = new Event("disconnected");
             }
 
             initConnection()
             {
+                this.remoteStream = new MediaStream();
                 this.connection = new RTCPeerConnection();
                 this.connection.onicecandidate = e=>
                     {
@@ -27,8 +27,6 @@ class UserConnection
                 this.connection.ontrack = e=>
                     {            
                         this.remoteStream.addTrack(e.track);
-                        document.body.appendChild(this.video);
-                        this.video.play();
                     }
 
                 this.connection.oniceconnectionstatechange = e =>
@@ -36,6 +34,10 @@ class UserConnection
                         if(this.connection.iceConnectionState == "disconnected")
                         {
                             this.disconnect();
+                        }
+                        if(this.connection.iceConnectionState == "connected")
+                        {
+                            this.dispatchEvent(this.connected);
                         }
                     }
 
@@ -81,6 +83,7 @@ class UserConnection
             disconnect()
             {
                 this.connection.close();
+                this.dispatchEvent(this.disconnected);                
                 this.initConnection();
             }
 
