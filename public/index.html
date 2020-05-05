@@ -11,6 +11,10 @@
     <button onclick="uc.disconnect();">disconnect</button>
     <br>
 
+    <ul id="users">
+
+    </ul>
+
     <video id="local_video"></video>
     <video id="remote_video"></video>
 
@@ -19,27 +23,45 @@
         
         var uc; 
 
+        var id;
+
         var ws = new WebSocket("ws://"+location.host);
 
         var localVideo = document.querySelector("#local_video");
         var remoteVideo = document.querySelector("#remote_video");
 
+        var users = document.querySelector("#users")
+
 
        ws.onmessage = async message=>
        {
            
-           var data = JSON.parse(message.data);
-           uc.addData(data);
+           message = JSON.parse(message.data);
+
+           if(message.type == "data")
+           {
+             uc.addData(JSON.parse(message.data));
+           }
+           if(message.type == "update")
+           {
+               id = message.data.id;
+               users.innerHTML = "";
+               message.data.users.forEach(user=>
+               {
+                   users.innerHTML += `<li>${user} ${(id==user)?"(me)":""}</li>`
+               });
+           }
+           
           
        }
 
         
         async function init()
         {
-            var stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
+            var stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});           
             localVideo.srcObject = stream;
             localVideo.play();
-            uc = new UserConnection(stream);
+            uc = new UserConnection(stream, sendMessage);
             uc.addEventListener("connected", e=>
             {
                 console.log(e);
@@ -53,6 +75,11 @@
         }
 
         document.body.onload = init;
+
+        function sendMessage(message)
+        {
+            ws.send(JSON.stringify({type:"data", data: message}));
+        }
        
     </script>
 </body>

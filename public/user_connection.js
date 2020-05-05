@@ -3,11 +3,12 @@ class UserConnection extends EventTarget
             connection;
             remoteStream;
             localStream;            
-            constructor(stream)
+            constructor(stream, send)
             {
                 super();
                 this.initConnection();
                 this.localStream = stream;
+                this.send = send;
             }
 
             initConnection()
@@ -18,7 +19,7 @@ class UserConnection extends EventTarget
                     {
                         if(e.candidate)
                         {
-                            ws.send(JSON.stringify(e.candidate));
+                            this.send(JSON.stringify(e.candidate));
                         }
                     }
 
@@ -53,7 +54,7 @@ class UserConnection extends EventTarget
                             
                             var answer = await this.connection.createAnswer();
                             await this.connection.setLocalDescription(answer);
-                            ws.send(JSON.stringify(answer))
+                            this.send(JSON.stringify(answer))
                         }
 
                         if(data.type == "answer")
@@ -75,7 +76,7 @@ class UserConnection extends EventTarget
                 var offer = await this.connection.createOffer();
                 await this.connection.setLocalDescription(offer);
 
-                ws.send(JSON.stringify(offer));
+                this.send(JSON.stringify(offer));
             }
 
             disconnect()

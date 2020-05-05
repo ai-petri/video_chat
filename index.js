@@ -13,28 +13,41 @@ var server = app.listen(80);
 
 var wsServer = new ws.Server({server});
 
-var connections = [];
+
+var users = [];
 
 wsServer.on("connection", connection=>
 {
     console.log(connection._socket.remoteAddress + "connected");
-    connections.push(connection);
+    
+    users.push({id: new Date().getTime(), connection: connection});
 
+    users.forEach(user=>
+        {
+            user.connection.send(JSON.stringify({from: "system", type: "update", data: {id: user.id, users: users.map(u=>u.id)}}));
+        }); 
+   
     connection.on("message", message=>
     {
-        connections.forEach(c=>
+        
+        message = JSON.parse(message);
+        users.forEach(user=>
             {
-                if(c!==connection)
+                if(user.connection!==connection)
                 {
-                    c.send(message);
+                    user.connection.send(JSON.stringify({from: user.id, type: message.type, data: message.data}));
                 } 
             });                       
     });
     
     connection.on("close", e=>
     {
-        connections = connections.filter(c=>c!==connection);
-        console.log(connection._socket.remoteAddress + "disconnected, " + connections.length);
+        users = users.filter(user => user.connection !== connection);
+        users.forEach(user=>
+            {
+                user.connection.send(JSON.stringify({from: "system", type: "update", data: {id: user.id, users: users.map(u=>u.id)}}));
+            }); 
+        console.log(connection._socket.remoteAddress + "disconnected, " + users.length);
     });
 
 
