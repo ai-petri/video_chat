@@ -61,7 +61,7 @@
             var stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});           
             localVideo.srcObject = stream;
             localVideo.play();
-            uc = new UserConnection(stream, sendMessage);
+            uc = new UserConnection(stream, sendText, 0);
             uc.addEventListener("connected", e=>
             {
                 console.log(e);
@@ -76,9 +76,9 @@
 
         document.body.onload = init;
 
-        function sendMessage(message)
+        function sendText(text)
         {
-            ws.send(JSON.stringify({type:"data", data: message}));
+            ws.send(text);
         }
        
     </script>

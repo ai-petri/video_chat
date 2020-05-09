@@ -2,13 +2,15 @@ class UserConnection extends EventTarget
         {
             connection;
             remoteStream;
-            localStream;            
-            constructor(stream, send)
+            localStream;
+            id;            
+            constructor(stream, sendText, id)
             {
                 super();
                 this.initConnection();
+                this.id = id;
                 this.localStream = stream;
-                this.send = send;
+                this.sendText = sendText;
             }
 
             initConnection()
@@ -19,7 +21,7 @@ class UserConnection extends EventTarget
                     {
                         if(e.candidate)
                         {
-                            this.send(JSON.stringify(e.candidate));
+                            this.sendObject(e.candidate);
                         }
                     }
 
@@ -54,7 +56,7 @@ class UserConnection extends EventTarget
                             
                             var answer = await this.connection.createAnswer();
                             await this.connection.setLocalDescription(answer);
-                            this.send(JSON.stringify(answer))
+                            this.sendObject(answer);
                         }
 
                         if(data.type == "answer")
@@ -76,7 +78,7 @@ class UserConnection extends EventTarget
                 var offer = await this.connection.createOffer();
                 await this.connection.setLocalDescription(offer);
 
-                this.send(JSON.stringify(offer));
+                this.sendObject(offer);
             }
 
             disconnect()
@@ -84,6 +86,18 @@ class UserConnection extends EventTarget
                 this.connection.close();
                 this.dispatchEvent(new Event("disconnected"));                
                 this.initConnection();
+            }
+
+            sendObject(obj)
+            {
+                var message =
+                {
+                    to: this.id,
+                    type: "data",
+                    data: JSON.stringify(obj)
+                };
+
+                this.sendText(JSON.stringify(message));
             }
 
         }
