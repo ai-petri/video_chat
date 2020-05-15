@@ -35,7 +35,7 @@ wsServer.on("connection", connection=>
             {
                 if(user.connection!==connection)
                 {
-                    user.connection.send(JSON.stringify({from: user.id, type: message.type, data: message.data}));
+                    user.connection.send(JSON.stringify({from: getId(connection), type: message.type, data: message.data}));
                 } 
             });                       
     });
@@ -54,7 +54,10 @@ wsServer.on("connection", connection=>
 })
 
 
-
+function getId(connection)
+{
+   return users.filter(u=>u.connection == connection).map(u=>u.id)[0];
+}
 
 process.stdin.setRawMode(true);
 

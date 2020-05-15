@@ -15,19 +15,28 @@
 
     </ul>
 
-    <video id="local_video"></video>
+    <canvas></canvas>
     <video id="remote_video"></video>
 
     <script src="user_connection.js"></script>
     <script>
         
-        var uc; 
+        
+
+        var selected;
+        var userConnections = [];
 
         var id;
 
         var ws = new WebSocket("ws://"+location.host);
 
-        var localVideo = document.querySelector("#local_video");
+        var canvas = document.querySelector("canvas");
+        var ctx = canvas.getContext("2d");
+        var stream = canvas.captureStream(25);
+
+
+        var localVideo = document.createElement("video");
+
         var remoteVideo = document.querySelector("#remote_video");
 
         var users = document.querySelector("#users")
@@ -40,7 +49,15 @@
 
            if(message.type == "data")
            {
-             uc.addData(JSON.parse(message.data));
+               for(let i=0; i<userConnections.length; i++)
+               {
+                console.log(message)
+                   if(userConnections[i].id == message.from)
+                   {
+                       userConnections[i].addData(JSON.parse(message.data));
+                       
+                   }
+               }
            }
            if(message.type == "update")
            {
@@ -48,8 +65,23 @@
                users.innerHTML = "";
                message.data.users.forEach(user=>
                {
-                   users.innerHTML += `<li>${user} ${(id==user)?"(me)":""}</li>`
+                   users.innerHTML += `<li>${user} ${(id==user)?"(me)":""}</li>`;
+                    if(id==user) return;
+                    //новое соединение
+                   if(!userConnections.map(c=>c.id).includes(user))
+                   {
+                       let connection = new UserConnection(stream.clone(),sendText,user);
+                       connection.addEventListener("connected", e=>
+                       {
+                            let video = document.createElement("video");
+                            video.srcObject = connection.remoteStream;
+                            document.body.appendChild(video);
+                       });
+                       userConnections.push(connection);
+                   }                   
                });
+               userConnections = userConnections.filter(connection=>message.data.users.includes(connection.id));
+               
            }
            
           
@@ -58,28 +90,36 @@
         
         async function init()
         {
-            var stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});           
-            localVideo.srcObject = stream;
-            localVideo.play();
-            uc = new UserConnection(stream, sendText, 0);
-            uc.addEventListener("connected", e=>
-            {
-                console.log(e);
-                remoteVideo.srcObject = uc.remoteStream;
-                remoteVideo.play();
-            });
-            uc.addEventListener("disconnected", e=>
-            {
-                remoteVideo.pause();
-            });
+            // stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
+
+            // userConnections.forEach(c=>c.localStream = stream);           
+            // localVideo.srcObject = stream;
+            // localVideo.play();
+            //uc = new UserConnection(stream, sendText, 0);
+            // uc.addEventListener("connected", e=>
+            // {
+            //     remoteVideo.srcObject = uc.remoteStream;
+            //     remoteVideo.play();
+            // });
+            // uc.addEventListener("disconnected", e=>
+            // {
+            //     remoteVideo.pause();
+            // });
         }
 
-        document.body.onload = init;
+        //document.body.onload = init;
 
         function sendText(text)
         {
             ws.send(text);
         }
+
+        function animate()
+        {
+            ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            requestAnimationFrame(animate);
+        }
+        animate();
        
     </script>
 </body>
