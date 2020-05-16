@@ -7,16 +7,13 @@
 </head>
 <body>
     
-    <button onclick="uc.connect();">connect</button>
-    <button onclick="uc.disconnect();">disconnect</button>
+    <button onclick="userConnections[0].connect();">connect</button>
+    <button >disconnect</button>
     <br>
 
     <ul id="users">
 
     </ul>
-
-    <canvas></canvas>
-    <video id="remote_video"></video>
 
     <script src="user_connection.js"></script>
     <script>
@@ -30,9 +27,12 @@
 
         var ws = new WebSocket("ws://"+location.host);
 
-        var canvas = document.querySelector("canvas");
-        var ctx = canvas.getContext("2d");
-        var stream = canvas.captureStream(25);
+
+  
+
+        var stream = new MediaStream();
+        
+        
 
 
         var localVideo = document.createElement("video");
@@ -69,58 +69,43 @@
                     if(id==user) return;
                     //новое соединение
                    if(!userConnections.map(c=>c.id).includes(user))
-                   {
-                       let connection = new UserConnection(stream.clone(),sendText,user);
+                   {                        
+                       let connection = new UserConnection(stream,sendText,user);
+                       let video = document.createElement("video");
+                        
                        connection.addEventListener("connected", e=>
                        {
-                            let video = document.createElement("video");
-                            video.srcObject = connection.remoteStream;
+                            video.srcObject = connection.remoteStream;                           
                             document.body.appendChild(video);
+                            video.play();
                        });
                        userConnections.push(connection);
+                       connection.addEventListener("disconnected", e=>
+                       {
+                           video.parentNode.removeChild(video);
+                       })
                    }                   
                });
                userConnections = userConnections.filter(connection=>message.data.users.includes(connection.id));
                
-           }
-           
-          
+           }                     
        }
 
         
         async function init()
         {
-            // stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
-
-            // userConnections.forEach(c=>c.localStream = stream);           
-            // localVideo.srcObject = stream;
-            // localVideo.play();
-            //uc = new UserConnection(stream, sendText, 0);
-            // uc.addEventListener("connected", e=>
-            // {
-            //     remoteVideo.srcObject = uc.remoteStream;
-            //     remoteVideo.play();
-            // });
-            // uc.addEventListener("disconnected", e=>
-            // {
-            //     remoteVideo.pause();
-            // });
+             stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});            
+             userConnections.forEach(c=>c.localStream = stream);                       
         }
 
-        //document.body.onload = init;
+        document.body.onload = init;
 
         function sendText(text)
         {
             ws.send(text);
         }
 
-        function animate()
-        {
-            ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            requestAnimationFrame(animate);
-        }
-        animate();
-       
+        
     </script>
 </body>
 </html>
