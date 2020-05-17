@@ -39,7 +39,7 @@ class UserConnection extends EventTarget
                         if(this.connection.iceConnectionState == "connected")
                         {
                             this.dispatchEvent(new Event("connected"));
-                        }
+                        }                        
                     }
 
             }
@@ -72,7 +72,9 @@ class UserConnection extends EventTarget
 
 
             async connect()
-            {            
+            {   
+                if (this.connection.iceConnectionState !== "new") return;
+
                 this.localStream.getTracks().forEach(track=>this.connection.addTrack(track));
 
                 var offer = await this.connection.createOffer();
@@ -83,6 +85,7 @@ class UserConnection extends EventTarget
 
             disconnect()
             {
+                if (this.connection.iceConnectionState !== "connected") return;
                 this.connection.close();
                 this.dispatchEvent(new Event("disconnected"));                
                 this.initConnection();

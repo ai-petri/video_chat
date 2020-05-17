@@ -33,7 +33,6 @@ class UserList extends HTMLElement
 
     update()
     {
-        console.log("update"+this.users.size);
         var ul = this.shadowRoot.querySelector("ul");
         ul.innerHTML = "";
 
