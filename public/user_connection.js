@@ -103,5 +103,17 @@ class UserConnection extends EventTarget
                 this.sendText(JSON.stringify(message));
             }
 
+            sendTextMessage(text)
+            {
+                var message =
+                {
+                    to: this.id,
+                    type: "text",
+                    data: text
+                }
+
+                this.sendText(JSON.stringify(message));
+            }
+
         }
 

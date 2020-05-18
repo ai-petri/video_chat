@@ -18,6 +18,7 @@
 
     <script src="user_connection.js"></script>
     <script src="user_list.js"></script>
+    <script src="text_message.js"></script>
     <script>
         
         var buttons = document.querySelectorAll(".controls");
@@ -78,6 +79,12 @@
                        connection.addData(JSON.parse(message.data));                       
                    }
                });
+           }
+
+           if(message.type == "text")
+           {
+               console.log(message.data);
+               document.body.appendChild(new TextMessage(message));
            }
 
            if(message.type == "update")
