@@ -1,7 +1,7 @@
 const express = require("express");
 const ws = require("ws");
 
-
+const {User} = require("./user.js");
 
 var app = express();
 
@@ -20,11 +20,11 @@ wsServer.on("connection", connection=>
 {
     console.log(connection._socket.remoteAddress + "connected");
     
-    users.push({id: new Date().getTime(), connection: connection});
+    users.push(new User(connection));
 
     users.forEach(user=>
         {
-            user.connection.send(JSON.stringify({from: "system", type: "update", data: {id: user.id, users: users.map(u=>u.id)}}));
+            user.connection.send(JSON.stringify({from: "system", type: "update", data: {id: user.id, users: users.map(u=>u.info)}}));
         }); 
    
     connection.on("message", message=>
@@ -45,7 +45,7 @@ wsServer.on("connection", connection=>
         users = users.filter(user => user.connection !== connection);
         users.forEach(user=>
             {
-                user.connection.send(JSON.stringify({from: "system", type: "update", data: {id: user.id, users: users.map(u=>u.id)}}));
+                user.connection.send(JSON.stringify({from: "system", type: "update", data: {id: user.id, users: users.map(u=>u.info)}}));
             }); 
         console.log(connection._socket.remoteAddress + "disconnected, " + users.length);
     });

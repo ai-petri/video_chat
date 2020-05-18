@@ -29,7 +29,7 @@
         {
             for(const c of userConnections)
             {
-                if(c.id == userList.selected)
+                if(c.id == userList.selected.id)
                 {
                     selected = c;
                     break;
@@ -82,17 +82,20 @@
 
            if(message.type == "update")
            {
-               message.data.users.forEach(user=>
-               {    
-                   id = message.data.id;
-                   console.log(message);
+                id = message.data.id;
+                let users = message.data.users.map(user=>JSON.parse(user));
+                let ids = users.map(user=>user.id);
+                console.log(message.data);
 
-                    if(id==user) return;
+                users.forEach(user=>
+                {    
+                   
+                    if(id==user.id) return;
 
                     //новое соединение
                    if(!userList.has(user))
                    {                        
-                       let connection = new UserConnection(stream,sendText,user);
+                       let connection = new UserConnection(stream,sendText,user.id);
                        let video = document.createElement("video");
                         
                        connection.addEventListener("connected", e=>
@@ -114,10 +117,11 @@
 
                 userConnections.forEach(connection =>
                 {
-                    if(!message.data.users.includes(connection.id))
+                    if(!ids.includes(connection.id))
                     {
+                        console.log(connection);
                         userConnections.delete(connection);
-                        userList.delete(connection.id);
+                        userList.deleteById(connection.id);
                     }
                    
                 });

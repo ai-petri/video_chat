@@ -85,7 +85,7 @@ class UserConnection extends EventTarget
 
             disconnect()
             {
-                if (this.connection.iceConnectionState !== "connected") return;
+                if (this.connection.iceConnectionState == "new") return;
                 this.connection.close();
                 this.dispatchEvent(new Event("disconnected"));                
                 this.initConnection();

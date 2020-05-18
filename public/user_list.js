@@ -28,7 +28,19 @@ class UserList extends HTMLElement
 
     has(user)
     {
-        return this.users.has(user);
+        return Array.from(this.users).map(user=>user.id).includes(user.id);
+    }
+
+    deleteById(id)
+    {
+        console.log("del "+ id);
+        this.users.forEach(user=>
+        {
+            if(user.id == id)
+            {
+                this.delete(user);
+            }
+        })
     }
 
     update()
@@ -39,7 +51,7 @@ class UserList extends HTMLElement
         this.users.forEach(user=>
         {
             let item = document.createElement("li");
-            item.innerHTML = user;
+            item.innerHTML = user.name;
             if(user == selected)
             {
                 item.classList.add("selected");
