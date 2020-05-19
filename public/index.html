@@ -4,22 +4,165 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        header
+        {
+            height: 50px;
+           background: grey;
+        }
+        #user
+        {
+            float:right;
+        }
+        #icon
+        {
+            height: 40px;
+            width: 40px;
+            margin: 5px;
+            vertical-align: middle;
+        }
+        #local-video
+        {
+            width: 240px;
+            height: 180px;
+            background: black;
+            /* position: relative; */
+            /* margin-top: 40px; */
+            /* left: 50%;
+            transform: translate(-50%);      */
+        }
+
+
+        ul
+        {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        li
+        {
+            cursor: pointer;
+            padding:  5px;
+        }
+        li:hover
+        {
+            background: lightgray;
+        }
+
+
+
+        #users
+        {
+            background: pink;
+            border: 1px solid red;
+        }
+        #main
+        {
+            display: grid;
+            grid-template-areas: 
+            "nav center"
+            "users center";
+            grid-template-columns: 1fr 5fr;
+            grid-template-rows: 1fr 2fr;
+            gap: 10px;
+        }
+        #main > *
+        {
+            margin: 5px;
+        }
+
+
+        nav
+        {
+            grid-area: nav;        
+        }
+
+        .tab
+        {
+            grid-area: center;
+            display: none;
+        }
+        #settings
+        {
+            grid-area: center;
+            display: block;
+        }
+        
+        #users
+        {
+            grid-area: users;         
+        }
+        
+    </style>
 </head>
 <body>
+
+    <header>
+        <div id="user">
+            <span id="name">me</span><img id="icon">
+        </div>
+        
+    </header>
+
+    <div id="main">
+        <nav>
+            <ul>
+                <li onclick="switchTab('home')">Моя страница</li>
+                <li onclick="switchTab('calls')">Звонки</li>
+                <li onclick="switchTab('messages')">Сообщения</li>
+                <li onclick="switchTab('settings')">Настройки</li>
+            </ul>
+        </nav>
+
+        <div id="users">
+            <button class="controls" hidden onclick="selected.connect();" >connect</button>
+            <button class="controls" hidden onclick="selected.disconnect();" >disconnect</button>
+        
+            <user-list></user-list>
+        </div>
+
+        <div class="tab" id="home">
+            Моя страница
+        </div>
+       
+        
+        <div class="tab" id="calls">
+            Звонки
+        </div>
+
+        <div class="tab" id="messages">
+            Сообщения
+        </div>
+
+        <div class="tab" id="settings">
+            <label for="name-input" style="margin: 5px;">Имя:</label><br>
+            <input type="text" id="name-input" style="margin: 5px; width: 240px;"><br>
+            
+            <label>Фотография</label>
+            <button onclick="document.querySelector('#image-input').click();">Загрузить</button><br>
+
+            <canvas id="image-preview" ></canvas><br>
+            
+            <input id="image-input" type="file" style="display: none;" oninput="uploadIcon(this.files[0])"><br>
+            <video id="local-video" style="margin: 5px; width: 240px; height: 180px;"></video>
+            <button>Сохранить</button>
+        </div>
+
+        
+    </div>
+
+   
     
-    <button class="controls" hidden onclick="selected.connect();" >connect</button>
-    <button class="controls" hidden onclick="selected.disconnect();" >disconnect</button>
-    <br>
 
-
-    <user-list></user-list>
-
-    </ul>
+    
 
     <script src="user_connection.js"></script>
     <script src="user_list.js"></script>
     <script src="text_message.js"></script>
     <script>
+
+        var localVideo = document.querySelector("#local-video");
         
         var buttons = document.querySelectorAll(".controls");
 
@@ -139,7 +282,9 @@
         
         async function init()
         {
-            stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});            
+            stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
+            localVideo.srcObject = stream;
+            localVideo.play();            
             userConnections.forEach(c=>c.localStream = stream);                       
         }
 
@@ -150,7 +295,37 @@
             ws.send(text);
         }
 
-        
+        function uploadIcon(file)
+        {
+            var image = new Image();
+            image.src = URL.createObjectURL(file); 
+            var canvas = document.querySelector("#image-preview");
+            
+            image.onload = function(e)
+            {
+                canvas.height = (canvas.width/image.width)*image.height
+                var ctx = canvas.getContext("2d");
+                ctx.drawImage(image,0,0,canvas.width, canvas.height);           
+            }
+            
+        }
+
+
+        function switchTab(tabId)
+        {
+            var tabs = document.querySelectorAll(".tab");
+            for(let tab of tabs)
+            {
+                if (tab.id == tabId)
+                {
+                    tab.style.display = "block";
+                }
+                else
+                {
+                    tab.style.display = "none";
+                }
+            }
+        }
     </script>
 </body>
 </html>
