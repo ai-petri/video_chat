@@ -33,14 +33,18 @@ class UserList extends HTMLElement
 
     deleteById(id)
     {
-        console.log("del "+ id);
         this.users.forEach(user=>
         {
             if(user.id == id)
             {
                 this.delete(user);
             }
-        })
+        });
+    }
+
+    getUserById(id)
+    {
+        return Array.from(this.users).find(user=>user.id == id);
     }
 
     update()
