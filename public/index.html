@@ -100,7 +100,7 @@
 
     <header>
         <div id="user">
-            <span id="name">me</span><img id="icon">
+            <span id="name"></span><img id="icon">
         </div>
         
     </header>
@@ -162,6 +162,12 @@
     <script src="text_message.js"></script>
     <script>
 
+        var currentUser;
+
+        var ws = new WebSocket("ws://"+location.host);
+
+        var stream = new MediaStream();
+        
         var localVideo = document.querySelector("#local-video");
         
         var buttons = document.querySelectorAll(".controls");
@@ -194,14 +200,6 @@
             }
         })
 
-        var id;
-
-        var ws = new WebSocket("ws://"+location.host);
-
-
-  
-
-        var stream = new MediaStream();
         
         
 
@@ -232,7 +230,7 @@
 
            if(message.type == "update")
            {
-                id = message.data.id;
+                let id = message.data.id;
                 let users = message.data.users.map(user=>JSON.parse(user));
                 let ids = users.map(user=>user.id);
                 console.log(message.data);
@@ -240,7 +238,12 @@
                 users.forEach(user=>
                 {    
                    
-                    if(id==user.id) return;
+                    if(id==user.id)
+                    {
+                        currentUser = user;
+                        document.querySelector("#name").innerHTML = currentUser.name;
+                        return;
+                    }
 
                     //новое соединение
                    if(!userList.has(user))
