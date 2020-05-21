@@ -14,12 +14,14 @@
         {
             float:right;
         }
-        #icon
+        .icon
         {
             height: 40px;
             width: 40px;
             margin: 5px;
             vertical-align: middle;
+            object-fit: cover;
+            border-radius: 50%;
         }
         video
         {
@@ -107,7 +109,7 @@
 
     <header>
         <div id="user">
-            <span id="name"></span><img id="icon">
+            <span id="name"></span><img class="icon">
         </div>
         
     </header>
@@ -291,7 +293,7 @@
         
         async function init()
         {
-            stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
+            //stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
             localVideo.srcObject = stream;
             localVideo.play();            
             userConnections.forEach(c=>c.localStream = stream);                       
