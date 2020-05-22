@@ -6,6 +6,10 @@
         var stream = new MediaStream();
         
         var localVideo = document.querySelector("#local-video");
+
+        var textMessages = document.querySelector("#all-messages");
+
+        var messageInput = document.querySelector("#message-input");
         
         var buttons = document.querySelectorAll(".controls");
 
@@ -62,7 +66,7 @@
            if(message.type == "text")
            {
                console.log(message.data);
-               document.body.appendChild(new TextMessage(message));
+               textMessages.appendChild(new TextMessage(message));
            }
 
            if(message.type == "update")
@@ -186,6 +190,7 @@
             var tabs = [...document.querySelectorAll(".tab")].filter(tab=>tab.classList.contains(groupClass));
             for(let tab of tabs)
             {
+                
                 if (tab.id == tabId)
                 {
                     tab.style.visibility = "visible";

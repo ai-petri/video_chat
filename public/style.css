@@ -59,7 +59,7 @@
         }
         .visible
         {
-            visibility: visible;
+            visibility:visible;
             animation: show 0.2s;
 			animation-timing-function: ease-out;
         }
@@ -69,7 +69,6 @@
         {
             background: black;
             position: relative; 
-            margin-top: 40px;
             left: 50%;
             transform: translate(-50%);     
         }
@@ -101,41 +100,26 @@
             border: 1px solid red;
         }
         
-        .container
-        {
-           display: grid;
-           grid-template-areas: 
-           "page";
-        }
-
         #main
         {
-            grid-area: page;
-            visibility: visible;
             height: 100%;
             justify-items: stretch;
             display: grid;
             grid-template-areas: 
-            "users  calls"
-            "users nav"
-            "users bottom";
-            grid-template-columns: 1fr 5fr;
-            grid-template-rows: 5fr 1fr;
+            "calls users"
+            "calls messages";
+            grid-template-columns: 5fr 1fr;
+            grid-template-rows: 1fr 5fr;
             gap: 10px;
         }
-        #main > *
+        .container > *
         {
-            margin: 5px;
+            margin: 20px;
         }
 
         .page
         {
-            grid-area: page;
-        }
-
-        nav
-        {
-            grid-area: nav;        
+           position: absolute;
         }
 
         .tab
@@ -143,11 +127,6 @@
             visibility: hidden;
         }
 
-        .bottom
-        {
-            grid-area: bottom;
-        }
-        
         
         #users
         {
