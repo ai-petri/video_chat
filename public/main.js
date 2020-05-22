@@ -122,7 +122,7 @@
         
         async function init()
         {
-            stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
+            //stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
             localVideo.srcObject = stream;
             localVideo.play();            
             userConnections.forEach(c=>c.localStream = stream);

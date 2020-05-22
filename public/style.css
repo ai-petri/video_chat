@@ -16,7 +16,6 @@
         header
         {
             height: 70px;
-           background: grey;
         }
         #user
         {
@@ -39,7 +38,14 @@
             background-color: rgba(0,0,0,0);
             user-select: none;
         }
-        .dropdown-button:hover
+        .button
+        {
+            cursor:pointer;
+            padding: 5px;
+            background-color: rgba(0,0,0,0);
+            user-select: none;
+        }
+        .button:hover
         {
             background-color: lightgrey;
         }
@@ -112,7 +118,7 @@
             grid-template-areas: 
             "users  calls"
             "users nav"
-            "users tab";
+            "users bottom";
             grid-template-columns: 1fr 5fr;
             grid-template-rows: 5fr 1fr;
             gap: 10px;
