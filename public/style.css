@@ -51,6 +51,9 @@
         }
         .dropdown-menu
         {
+            position: absolute;
+            z-index: 1;
+            background-color: white;
             border: 1px solid grey;
         }
         .hidden
@@ -96,8 +99,8 @@
 
         #users
         {
-            background: pink;
-            border: 1px solid red;
+            /* overflow: hidden; */
+            width: auto;
         }
         
         #main
@@ -108,7 +111,7 @@
             grid-template-areas: 
             "calls users"
             "calls messages";
-            grid-template-columns: 5fr 1fr;
+            grid-template-columns: 4fr 1fr;
             grid-template-rows: 1fr 5fr;
             gap: 10px;
         }
@@ -130,10 +133,21 @@
         
         #users
         {
-            grid-area: users;         
+            grid-area: users;
+            width: 350px;         
         }
 
         #calls
         {
             grid-area: calls;
+        }
+        #all-messages
+        {
+            border: 1px solid grey;
+        }
+
+        .controls
+        {
+            width: 170px;
+            height: 25px;
         }

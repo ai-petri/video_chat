@@ -26,11 +26,6 @@
                     break;
                 }
             }
-
-            for(const button of buttons)
-            {
-                button.hidden = false;
-            }
         })
 
         userList.addEventListener("deselected", e=>
