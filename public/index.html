@@ -25,7 +25,8 @@
     </header>
 
     <div class="container">
-        <div class="page tab" style="visibility: visible;">
+        <!-- Главная страница -->
+        <div class="page tab" id="home" style="visibility: visible;">
             
 
             <div id="main">
@@ -64,23 +65,24 @@
            
         </div>
 
-    <div class="page tab" id="home">
-        Моя страница
-    </div>
+        <!-- Моя страница -->
+        <div class="page tab" id="profile">
+            Моя страница
+        </div>
 
+        <!--Настройки-->
+        <div class="page tab" id="settings">
+            <label for="name-input" style="margin: 5px;">Имя:</label><br>
+            <input type="text" id="name-input" style="margin: 5px; width: 240px;"><br>
+            
+            <label>Фотография</label>
+            <button onclick="document.querySelector('#image-input').click();">Загрузить</button><br>
 
-    <div class="page tab" id="settings">
-        <label for="name-input" style="margin: 5px;">Имя:</label><br>
-        <input type="text" id="name-input" style="margin: 5px; width: 240px;"><br>
-        
-        <label>Фотография</label>
-        <button onclick="document.querySelector('#image-input').click();">Загрузить</button><br>
-
-        <canvas id="image-preview" ></canvas><br>
-        
-        <input id="image-input" type="file" style="display: none;" oninput="uploadIcon(this.files[0])"><br>
-        <button>Сохранить</button>
-    </div>
+            <canvas id="image-preview" ></canvas><br>
+            
+            <input id="image-input" type="file" style="display: none;" oninput="uploadIcon(this.files[0])"><br>
+            <button>Сохранить</button>
+        </div>
     </div>
 
     
