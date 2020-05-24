@@ -2,6 +2,7 @@ class User
 {
     id = new Date().getTime();
     name = "anonymous";
+    image;
     connection;
     constructor(connection)
     {
@@ -10,7 +11,7 @@ class User
 
     get info()
     {
-        return JSON.stringify({ id: this.id, name: this.name });
+        return JSON.stringify({ id: this.id, name: this.name, image: this.image });
     }
 }
 

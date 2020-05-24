@@ -47,6 +47,8 @@
            
            message = JSON.parse(message.data);
 
+           console.log(message.data);
+
            if(message.type == "data")
            {
                userConnections.forEach(connection =>
@@ -60,7 +62,7 @@
 
            if(message.type == "text")
            {
-               console.log(message.data);
+
                textMessages.appendChild(new TextMessage(message));
            }
 
@@ -69,7 +71,7 @@
                 let id = message.data.id;
                 let users = message.data.users.map(user=>JSON.parse(user));
                 let ids = users.map(user=>user.id);
-                console.log(message.data);
+
 
                 users.forEach(user=>
                 {    
@@ -164,7 +166,7 @@
             ws.send(text);
         }
 
-        function uploadIcon(file)
+        function addIcon(file)
         {
             var image = new Image();
             image.src = URL.createObjectURL(file); 
@@ -177,6 +179,25 @@
                 ctx.drawImage(image,0,0,canvas.width, canvas.height);           
             }
             
+        }
+
+        function saveSettings()
+        {
+            var name = document.querySelector("#name-input").value;
+            var imageURL = document.querySelector("#image-preview").toDataURL();
+           
+            var message =
+            {
+                to: "system",
+                type: "settings",
+                data: 
+                {
+                    name: name,
+                    image: imageURL
+                }
+            }
+
+           sendText(JSON.stringify(message));            
         }
 
 

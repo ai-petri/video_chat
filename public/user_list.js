@@ -59,7 +59,7 @@ class UserList extends HTMLElement
             let item = document.createElement("li");
             item.innerHTML =
             `
-            <img src="default_icon.svg">
+            <img src="${user.image? user.image : 'default_icon.svg'}">
             `
             if(user == selected)
             {

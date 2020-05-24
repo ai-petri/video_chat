@@ -22,37 +22,58 @@ wsServer.on("connection", connection=>
     
     users.push(new User(connection));
 
-    users.forEach(user=>
-        {
-            user.connection.send(JSON.stringify({from: "system", type: "update", data: {id: user.id, users: users.map(u=>u.info)}}));
-        }); 
-   
+    update();
+     
     connection.on("message", message=>
     {
         
         message = JSON.parse(message);
-        users.forEach(user=>
+        if(message.to == "system")
+        {
+            if(message.type == "settings")
             {
-                if(user.connection!==connection)
+                users.filter(user => user.connection == connection).forEach(user=>
                 {
-                    user.connection.send(JSON.stringify({from: getId(connection), type: message.type, data: message.data}));
-                } 
-            });                       
+                    user.name = message.data.name;
+                    user.image = message.data.image;                   
+                });
+
+                
+
+                update();
+            }
+            
+        }
+        else
+        {
+            users.forEach(user=>
+                {
+                    if(user.connection!==connection && message.to == user.id)
+                    {
+                        user.connection.send(JSON.stringify({from: getId(connection), type: message.type, data: message.data}));
+                    } 
+                }); 
+        }
+                              
     });
     
     connection.on("close", e=>
     {
         users = users.filter(user => user.connection !== connection);
-        users.forEach(user=>
-            {
-                user.connection.send(JSON.stringify({from: "system", type: "update", data: {id: user.id, users: users.map(u=>u.info)}}));
-            }); 
+        update();    
         console.log(connection._socket.remoteAddress + "disconnected, " + users.length);
     });
 
 
 })
 
+function update()
+{
+    users.forEach(user=>
+    {
+        user.connection.send(JSON.stringify({from: "system", type: "update", data: {id: user.id, users: users.map(u=>u.info)}}));
+    }); 
+}
 
 function getId(connection)
 {
