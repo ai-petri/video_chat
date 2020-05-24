@@ -80,6 +80,7 @@
                     {
                         currentUser = user;
                         document.querySelector("#name").innerHTML = currentUser.name;
+                        document.querySelector("#user").querySelector(".icon").src = user.image? user.image: "default_icon.svg";
                         return;
                     }
 
@@ -103,7 +104,15 @@
 
                        userConnections.add(connection);
                        userList.add(user);
-                   }                                      
+                   }              
+                    else
+                    {
+                       let u = userList.getUserById(user.id);
+                       u.name = user.name;
+                       u.image = user.image;
+                       userList.update();
+                    }
+                                                         
                });
 
                 userConnections.forEach(connection =>
