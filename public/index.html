@@ -13,7 +13,7 @@
         <div id="user">
             <div class="dropdown-button"><span id="name"></span><img class="icon" src="default_icon.svg"></div>
             <div class="dropdown-menu hidden">
-                <div class="button" onclick="switchTab('page', 'home')">
+                <div class="button" onclick="switchTab('page', 'profile')">
                    Моя страница
                 </div>
                 <div class="button" onclick="switchTab('page', 'settings')">
@@ -31,11 +31,10 @@
 
             <div id="main">
                 <div id="calls">
-                    <video id="local-video" style="width: 80%;"></video>
+                    <video id="local-video"></video>
                 </div>
                 <div id="users" style="height: 100px;">
-                    <user-list></user-list>
-                    <br><br>
+                    <user-list></user-list><br><br>
                     <button class="controls"  onclick="selected.connect();" >connect</button>
                     <button class="controls"  onclick="selected.disconnect();" >disconnect</button>      
                 </div>
@@ -47,17 +46,17 @@
                 </div>
             </div>
             
-            <div id="bottom-container" style="background-color: lightgreen;">
+            <div id="bottom-container" >
                 <nav>
                     <ul>
                         <li onclick="switchTab('bottom', 'mixer')">Звук</li>
                         <li onclick="switchTab('bottom', 'whiteboard')">Доска</li>
                     </ul>
                 </nav>
-                <div class="bottom tab" id="mixer" style="position:absolute;">
+                <div class="bottom tab" id="mixer" >
                     ---------
                 </div>
-                <div class="bottom tab" id="whiteboard" style="position:absolute;">
+                <div class="bottom tab" id="whiteboard" >
                     ---------
                 </div>
             </div>
