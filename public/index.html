@@ -33,16 +33,17 @@
                 <div id="calls">
                     <video id="local-video"></video>
                 </div>
-                <div id="users" style="height: 100px;">
-                    <user-list></user-list><br><br>
-                    <button class="controls"  onclick="selected.connect();" >connect</button>
-                    <button class="controls"  onclick="selected.disconnect();" >disconnect</button>      
+                <div id="users">
+                    <user-list></user-list>
                 </div>
                 <div id="messages">
-                    <div id="all-messages" style="height: 60%;  width: 100%;"></div>
+                    <div id="all-messages"></div>
                     <br>
-                   <textarea style="resize: none; width: 100%; height: 30%;" id="message-input" cols="30" rows="10"></textarea>
-                   <button onclick="selected.sendTextMessage(messageInput.value)">Отправить</button>
+                    <div style="display: flex;">
+                        <textarea id="message-input" rows="5"></textarea>
+                        <button onclick="selected.sendTextMessage(messageInput.value)">Отправить</button>
+                    </div>
+                   
                 </div>
             </div>
             
