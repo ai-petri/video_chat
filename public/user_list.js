@@ -51,6 +51,12 @@ class UserList extends HTMLElement
         return Array.from(this.users).find(user=>user.id == id);
     }
 
+    getIds()
+    {
+        return  Array.from(this.users).map(user=>user.id);
+    }
+
+
     update()
     {
         this.items = [];
@@ -58,14 +64,15 @@ class UserList extends HTMLElement
         {
             let item = document.createElement("li");
             item.innerHTML =
-            `
+            `          
             <img src="${user.image? user.image : 'default_icon.svg'}">
+            <input type="checkbox">
             `
             if(user == selected)
             {
                 item.classList.add("selected");
             }
-            item.onclick = e => 
+            item.querySelector("img").onclick = e => 
             {
                 this.selected = user;
                 
@@ -74,7 +81,11 @@ class UserList extends HTMLElement
                 this.updateList();
                 this.dispatchEvent(new Event("selected"))
             }
-            
+            item.querySelector("input[type=checkbox]").onclick = e =>
+            {
+                
+            }
+
             this.items.push(item);
         });
 
@@ -116,7 +127,7 @@ class UserList extends HTMLElement
         this.updateList();
     }
    
-
+    
     connectedCallback()
     {
         var shadow = this.attachShadow({mode:"open"});
@@ -124,12 +135,20 @@ class UserList extends HTMLElement
         `
         <style>
 
+            input[type=checkbox]
+		    {
+                opacity: 0;
+                margin: 0;
+                position: absolute; 
+            }
+            input[type=checkbox]:checked
+		    {
+                opacity: 1;
+		    }
             img
             {
                 height: 40px;
-                width: 40px;
-                margin: 5px;
-                padding: 0;
+                width: 40px; 
                 object-fit: cover;
                 border-radius: 50%;
             }        
@@ -137,7 +156,8 @@ class UserList extends HTMLElement
             {
                 list-style-type: none;
                 margin: 0;
-                padding: 5px;   
+                padding: 0;
+                margin-bottom: 15px;
                 display: inline-block;
                 vertical-align: middle;
                 width:70%;
@@ -147,8 +167,13 @@ class UserList extends HTMLElement
             {
                 cursor: pointer;
                 display: inline-block;
-                
+                margin: 0px;
+                padding: 10px;
                 border: 1px solid rgba(0,0,0,0);
+            }
+            li:hover > input[type=checkbox]
+            {
+                opacity: 1;
             }
             button
             {
@@ -161,7 +186,7 @@ class UserList extends HTMLElement
             }
             .selected
             {
-                border: 1px solid red;
+                background: lightgrey;
             }
         </style>
 

@@ -14,18 +14,11 @@
         var buttons = document.querySelectorAll(".controls");
 
         var selected;
-        var userConnections = new Set();
+        
         var userList = document.querySelector("user-list");
         userList.addEventListener("selected", e=>
         {
-            for(const c of userConnections)
-            {
-                if(c.id == userList.selected.id)
-                {
-                    selected = c;
-                    break;
-                }
-            }
+            selected = userList.selected;
         })
 
         userList.addEventListener("deselected", e=>
@@ -51,13 +44,7 @@
 
            if(message.type == "data")
            {
-               userConnections.forEach(connection =>
-               {
-                   if(connection.id == message.from)
-                   {
-                       connection.addData(JSON.parse(message.data));                       
-                   }
-               });
+               userList.getUserById(message.from).addData(JSON.parse(message.data));
            }
 
            if(message.type == "text")
@@ -72,36 +59,36 @@
                 let ids = users.map(user=>user.id);
 
 
-                users.forEach(user=>
+                users.forEach(userinfo=>
                 {    
                    
-                    if(id==user.id)
+                    if(id==userinfo.id)
                     {
-                        currentUser = user;
+                        currentUser = userinfo;
                         document.querySelector("#name").innerHTML = currentUser.name;
-                        document.querySelector("#user").querySelector(".icon").src = user.image? user.image: "default_icon.svg";
+                        document.querySelector("#user").querySelector(".icon").src = userinfo.image? userinfo.image: "default_icon.svg";
                         return;
                     }
 
                     //новое соединение
-                   if(!userList.has(user))
+                   if(!userList.has(userinfo))
                    {                        
-                       let connection = new UserConnection(stream,sendText,user.id);
+                       let user = new User(stream,sendText,userinfo.id,userinfo.name,userinfo.image);
                        let video = document.createElement("video");
                         
-                       connection.addEventListener("connected", e=>
+                       user.addEventListener("connected", e=>
                        {
-                            video.srcObject = connection.remoteStream;                           
+                            video.srcObject = user.remoteStream;                           
                             document.body.appendChild(video);
                             video.play();
                        });
                        
-                       connection.addEventListener("disconnected", e=>
+                       user.addEventListener("disconnected", e=>
                        {
                            video.parentNode.removeChild(video);
                        })
 
-                       userConnections.add(connection);
+                       
                        userList.add(user);
                    }              
                     else
@@ -114,13 +101,11 @@
                                                          
                });
 
-                userConnections.forEach(connection =>
+                userList.getIds().forEach(id =>
                 {
-                    if(!ids.includes(connection.id))
+                    if(!ids.includes(id))
                     {
-                        console.log(connection);
-                        userConnections.delete(connection);
-                        userList.deleteById(connection.id);
+                        userList.deleteById(id);
                     }
                    
                 });
@@ -134,7 +119,7 @@
             //stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
             localVideo.srcObject = stream;
             localVideo.play();            
-            userConnections.forEach(c=>c.localStream = stream);
+            userList.users.forEach(u=>u.localStream = stream);
             
             
             var menuButtons = document.querySelectorAll(".dropdown-button");

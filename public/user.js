@@ -1,14 +1,19 @@
-class UserConnection extends EventTarget
+class User extends EventTarget
         {
             connection;
             remoteStream;
             localStream;
-            id;            
-            constructor(stream, sendText, id)
+            id;
+            name;
+            image;
+                        
+            constructor(stream, sendText, id, name, image)
             {
                 super();
                 this.initConnection();
                 this.id = id;
+                this.name = name;
+                this.image = image;
                 this.localStream = stream;
                 this.sendText = sendText;
             }
