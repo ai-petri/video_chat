@@ -62,8 +62,7 @@
 
            if(message.type == "text")
            {
-
-               textMessages.appendChild(new TextMessage(message));
+               textMessages.appendChild(new TextMessage(userList.getUserById(message.from),message.data));
            }
 
            if(message.type == "update")
@@ -225,4 +224,13 @@
                     tab.style.visibility = "hidden";
                 }
             }
+        }
+
+
+        function sendTextMessage()
+        {
+            if(!selected) return;
+            selected.sendTextMessage(messageInput.value);
+            textMessages.appendChild(new TextMessage(currentUser,messageInput.value));
+            messageInput.value = "";
         }

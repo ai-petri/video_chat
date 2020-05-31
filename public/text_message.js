@@ -1,11 +1,13 @@
 class TextMessage extends HTMLElement
 {
-    constructor(message)
+    constructor(user, data)
     {
         super();
-        this.from = message.from;
-        this.data = message.data;
+        this.user = user;
+        this.data = data;
+        this.date = new Date();
     }
+    
     connectedCallback()
     {
         var shadow = this.attachShadow({mode:"open"});
@@ -18,7 +20,11 @@ class TextMessage extends HTMLElement
             display: block;
         }
         </style>
-           ${this.from}: ${this.data}
+        <span style="color:blue;">
+           [${("0" + this.date.getHours()).slice(-2)}:${("0" + this.date.getMinutes()).slice(-2)}]<b> ${this.user.name} :</b> 
+           </span>
+            ${this.data}
+            <br><br>
         `
     }
 }

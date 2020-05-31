@@ -116,6 +116,7 @@
         {
             background-color: lightgrey;
             height: 300px;
+            overflow: auto;
         }
         #message-input
         {
