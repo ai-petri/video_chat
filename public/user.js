@@ -6,7 +6,7 @@ class User extends EventTarget
             id;
             name;
             image;
-                        
+                  
             constructor(stream, sendText, id, name, image)
             {
                 super();
@@ -46,6 +46,16 @@ class User extends EventTarget
                             this.dispatchEvent(new Event("connected"));
                         }                        
                     }
+                this.connection.onnegotiationneeded = async e =>
+                {
+                    console.log("negotiation needed, ice state = " + this.connection.iceConnectionState);
+                    if (this.connection.iceConnectionState !== "new")
+                    {
+                        let offer = await this.connection.createOffer();
+                        await this.connection.setLocalDescription(offer);
+                        this.sendObject(offer);
+                    }                  
+                }
 
             }
 
@@ -79,9 +89,8 @@ class User extends EventTarget
             async connect()
             {   
                 if (this.connection.iceConnectionState !== "new") return;
-
+                
                 this.localStream.getTracks().forEach(track=>this.connection.addTrack(track));
-
                 var offer = await this.connection.createOffer();
                 await this.connection.setLocalDescription(offer);
 

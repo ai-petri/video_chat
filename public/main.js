@@ -79,7 +79,7 @@
                        user.addEventListener("connected", e=>
                        {
                             video.srcObject = user.remoteStream;                           
-                            document.body.appendChild(video);
+                            document.querySelector("#calls").appendChild(video);
                             video.play();
                        });
                        
@@ -93,9 +93,9 @@
                    }              
                     else
                     {
-                       let u = userList.getUserById(user.id);
-                       u.name = user.name;
-                       u.image = user.image;
+                       let u = userList.getUserById(userinfo.id);
+                       u.name = userinfo.name;
+                       u.image = userinfo.image;
                        userList.update();
                     }
                                                          
@@ -116,7 +116,7 @@
         
         async function init()
         {
-            //stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
+            stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
             localVideo.srcObject = stream;
             localVideo.play();            
             userList.users.forEach(u=>u.localStream = stream);
