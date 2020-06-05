@@ -81,7 +81,7 @@ class User extends EventTarget
                 }
                 if(data.candidate)
                 {                   
-                    this.connection.addIceCandidate(data).then(()=>{console.log("ice candidate added")}).catch(reason=>console.log(reason));
+                    this.connection.addIceCandidate(data).then(()=>{console.log("ice candidate added")}).catch(reason=>{console.log(reason); this.disconnect()});
                 }
             }
 
@@ -99,7 +99,6 @@ class User extends EventTarget
 
             disconnect()
             {
-                if (this.connection.iceConnectionState == "new") return;
                 this.connection.close();
                 this.dispatchEvent(new Event("disconnected"));                
                 this.initConnection();

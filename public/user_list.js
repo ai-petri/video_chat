@@ -81,10 +81,39 @@ class UserList extends HTMLElement
                 this.updateList();
                 this.dispatchEvent(new Event("selected"))
             }
-            item.querySelector("input[type=checkbox]").onclick = e =>
+            let checkbox = item.querySelector("input[type=checkbox]");
+            if(user.connection.iceConnectionState !== "new")
             {
-                
+                checkbox.checked = true;
             }
+            let timer;
+            checkbox.onclick = e =>
+            {
+                if(checkbox.checked)
+                {
+                    user.connect();
+                    checkbox.disabled = true;
+                    timer = setTimeout(() => {
+                        user.disconnect();
+                    }, 2000);
+                }
+                else
+                {
+                    user.disconnect();
+                }     
+            }
+            user.addEventListener("connected", e=>
+            {
+                clearTimeout(timer);
+                checkbox.checked = true;
+                checkbox.disabled = false;
+            })
+            user.addEventListener("disconnected", e=>
+            {
+                clearTimeout(timer);
+                checkbox.checked = false;
+                checkbox.disabled = false;
+            })
 
             this.items.push(item);
         });
