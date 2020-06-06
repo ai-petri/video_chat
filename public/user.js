@@ -3,6 +3,7 @@ class User extends EventTarget
             connection;
             remoteStream;
             localStream;
+            dataChannels = [];
             id;
             name;
             image;
@@ -46,15 +47,24 @@ class User extends EventTarget
                             this.dispatchEvent(new Event("connected"));
                         }                        
                     }
+
+                this.connection.ondatachannel = e =>
+                    {
+                        console.log("ondatachannel");
+                        e.channel.onmessage = e =>
+                        {
+                            console.log(e.data);
+                        }
+                        this.dataChannels.push(e.channel);           
+                    }
                 this.connection.onnegotiationneeded = async e =>
                 {
                     console.log("negotiation needed, ice state = " + this.connection.iceConnectionState);
-                    if (this.connection.iceConnectionState !== "new")
-                    {
-                        let offer = await this.connection.createOffer();
-                        await this.connection.setLocalDescription(offer);
-                        this.sendObject(offer);
-                    }                  
+
+                    let offer = await this.connection.createOffer();
+                    await this.connection.setLocalDescription(offer);
+                    this.sendObject(offer);
+                                      
                 }
 
             }
@@ -65,10 +75,14 @@ class User extends EventTarget
                 {
                         if(data.type == "offer")
                         {
+                            try
+                            {
+                                this.localStream.getTracks().forEach(track=>this.connection.addTrack(track));
+                            }
+                            catch(e){console.log(e)};
                             
-                            this.localStream.getTracks().forEach(track=>this.connection.addTrack(track));
                             this.connection.setRemoteDescription(new RTCSessionDescription(data));
-                            
+                            console.log("remote description set");
                             var answer = await this.connection.createAnswer();
                             await this.connection.setLocalDescription(answer);
                             this.sendObject(answer);
@@ -89,7 +103,14 @@ class User extends EventTarget
             async connect()
             {   
                 if (this.connection.iceConnectionState !== "new") return;
-                
+
+                var dataChannel = this.connection.createDataChannel("channel");
+                dataChannel.onmessage = e =>
+                {
+                    console.log(e.data);
+                }
+                this.dataChannels.push(dataChannel);
+
                 this.localStream.getTracks().forEach(track=>this.connection.addTrack(track));
                 var offer = await this.connection.createOffer();
                 await this.connection.setLocalDescription(offer);
@@ -97,9 +118,20 @@ class User extends EventTarget
                 this.sendObject(offer);
             }
 
+            createDataChannel(name)
+            {         
+                var dataChannel = this.connection.createDataChannel(name);
+                dataChannel.onmessage = e =>
+                {
+                    console.log(e.data);
+                }
+                this.dataChannels.push(dataChannel); 
+            }
+
             disconnect()
             {
                 this.connection.close();
+                this.dataChannel = null;
                 this.dispatchEvent(new Event("disconnected"));                
                 this.initConnection();
             }
