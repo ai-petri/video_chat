@@ -35,20 +35,17 @@ class UserList extends HTMLElement
         return Array.from(this.users).map(user=>user.id).includes(user.id);
     }
 
-    deleteById(id)
-    {
-        this.users.forEach(user=>
-        {
-            if(user.id == id)
-            {
-                this.delete(user);
-            }
-        });
-    }
+    
 
     getUserById(id)
     {
-        return Array.from(this.users).find(user=>user.id == id);
+        for (let u of this.users)
+        {
+            if(u.id === id)
+            {
+                return u;
+            }
+        }
     }
 
     getIds()
@@ -74,6 +71,8 @@ class UserList extends HTMLElement
             }
             item.querySelector("img").onclick = e => 
             {
+                if (this.selected === user) return;
+                
                 this.selected = user;
                 
                 this.items.forEach(el=>el.classList.remove("selected"));                        

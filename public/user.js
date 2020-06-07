@@ -1,6 +1,7 @@
 class User extends EventTarget
         {
             connection;
+            connected = false;
             remoteStream;
             localStream;
             dataChannels = [];
@@ -44,6 +45,7 @@ class User extends EventTarget
                         }
                         if(this.connection.iceConnectionState == "connected")
                         {
+                            this.connected = true;
                             this.dispatchEvent(new Event("connected"));
                         }                        
                     }
@@ -57,16 +59,6 @@ class User extends EventTarget
                         }
                         this.dataChannels.push(e.channel);           
                     }
-                this.connection.onnegotiationneeded = async e =>
-                {
-                    console.log("negotiation needed, ice state = " + this.connection.iceConnectionState);
-
-                    let offer = await this.connection.createOffer();
-                    await this.connection.setLocalDescription(offer);
-                    this.sendObject(offer);
-                                      
-                }
-
             }
 
             async addData(data)
@@ -75,14 +67,15 @@ class User extends EventTarget
                 {
                         if(data.type == "offer")
                         {
-                            try
+                            if(this.connected)
                             {
-                                this.localStream.getTracks().forEach(track=>this.connection.addTrack(track));
+                                this.disconnect();
                             }
-                            catch(e){console.log(e)};
+
+                            this.localStream.getTracks().forEach(track=>this.connection.addTrack(track));
                             
                             this.connection.setRemoteDescription(new RTCSessionDescription(data));
-                            console.log("remote description set");
+
                             var answer = await this.connection.createAnswer();
                             await this.connection.setLocalDescription(answer);
                             this.sendObject(answer);
@@ -102,7 +95,6 @@ class User extends EventTarget
 
             async connect()
             {   
-                if (this.connection.iceConnectionState !== "new") return;
 
                 var dataChannel = this.connection.createDataChannel("channel");
                 dataChannel.onmessage = e =>
@@ -130,9 +122,17 @@ class User extends EventTarget
 
             disconnect()
             {
+                
+                this.remoteStream.getTracks().forEach(track => track.stop());           
+                this.connection.onicecandidate = null;
+                this.connection.ontrack = null
+                this.connection.oniceconnectionstatechange = null;
+                this.connection.ondatachannel = null;
                 this.connection.close();
-                this.dataChannel = null;
-                this.dispatchEvent(new Event("disconnected"));                
+                this.dataChannels.forEach(channel=>channel.close());
+                this.dataChannels = [];
+                this.connected = false;
+                this.dispatchEvent(new Event("disconnected"));        
                 this.initConnection();
             }
 

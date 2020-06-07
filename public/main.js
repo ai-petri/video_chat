@@ -7,11 +7,11 @@
         
         var localVideo = document.querySelector("#local-video");
 
+        var remoteVideo = document.querySelector("#remote-video");
+
         var textMessages = document.querySelector("#all-messages");
 
         var messageInput = document.querySelector("#message-input");
-        
-        var buttons = document.querySelectorAll(".controls");
 
         var selected;
         
@@ -19,17 +19,16 @@
         userList.addEventListener("selected", e=>
         {
             selected = userList.selected;
+            loadVideo();
         })
-
         userList.addEventListener("deselected", e=>
         {
-            for(const button of buttons)
+            if(selected)
             {
-                button.hidden = true;
+                selected.disconnect();
+                loadVideo();
             }
-        })
-
-        
+        });
         
 
         
@@ -40,7 +39,6 @@
            
            message = JSON.parse(message.data);
 
-           console.log(message.data);
 
            if(message.type == "data")
            {
@@ -74,21 +72,9 @@
                    if(!userList.has(userinfo))
                    {                        
                        let user = new User(stream,sendText,userinfo.id,userinfo.name,userinfo.image);
-                       let video = document.createElement("video");
                         
-                       user.addEventListener("connected", e=>
-                       {
-                            video.srcObject = user.remoteStream;                           
-                            document.querySelector("#calls").appendChild(video);
-                            video.play();
-                       });
-                       
-                       user.addEventListener("disconnected", e=>
-                       {
-                           video.parentNode.removeChild(video);
-                       })
-
-                       
+                       user.addEventListener("connected", connectionEventHandler);                
+                       user.addEventListener("disconnected", connectionEventHandler);
                        userList.add(user);
                    }              
                     else
@@ -105,7 +91,10 @@
                 {
                     if(!ids.includes(id))
                     {
-                        userList.deleteById(id);
+                       let u = userList.getUserById(id);
+                       u.removeEventListener("connected", connectionEventHandler);                
+                       u.removeEventListener("disconnected", connectionEventHandler);
+                       userList.delete(u);
                     }
                    
                 });
@@ -219,3 +208,28 @@
             textMessages.appendChild(new TextMessage(currentUser,messageInput.value));
             messageInput.value = "";
         }
+
+
+        function loadVideo()
+        {       
+            if(selected && selected.connected)
+            {
+                remoteVideo.srcObject = selected.remoteStream;
+                remoteVideo.play(); 
+            }
+            else
+            {
+                remoteVideo.srcObject = null;
+                remoteVideo.load();          
+            } 
+        }
+
+        function connectionEventHandler(e)
+        {
+            if(e.target === selected)
+            {
+                loadVideo();
+            }
+        }
+
+       
