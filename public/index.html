@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <video id="local-video"></video>
 
     <header >
-        <span style="font-size: 24pt">Чат</span>
         <div id="user">
             <div class="dropdown-button"><span id="name"></span><img class="icon" src="default_icon.svg"></div>
             <div class="dropdown-menu hidden">
@@ -31,8 +31,7 @@
 
             <div id="main">
                 <div id="calls">
-                    <video id="local-video"></video>
-                    <video id="remote-video"></video>
+                    <video id="remote-video"></video>                   
                 </div>
                 <div id="users">
                     <user-list></user-list>
@@ -41,7 +40,7 @@
                     <div id="all-messages"></div>
                     <br>
                     <div style="display: flex;">
-                        <textarea id="message-input" rows="5"></textarea>
+                        <input id="message-input">
                         <button onclick="sendTextMessage()">Отправить</button>
                     </div>
                    
