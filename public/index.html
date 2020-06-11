@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <video id="local-video"></video>
+    
 
     <header >
         <div id="user">
@@ -27,41 +27,37 @@
     <div class="container">
         <!-- Главная страница -->
         <div class="page tab" id="home" style="visibility: visible;">
-            
-
-            <div id="main">
-                <div id="calls">
-                    <video id="remote-video"></video>                   
+         
+            <div id="calls">
+                <video id="remote-video"></video>
+                <video id="local-video"></video>                 
+            </div>
+            <div id="users">
+                <user-list></user-list>
+            </div>
+            <div id="messages">
+                <div id="all-messages"></div>
+                <br>
+                <div style="display: flex;">
+                    <input id="message-input">
+                    <button onclick="sendTextMessage()">Отправить</button>
                 </div>
-                <div id="users">
-                    <user-list></user-list>
-                </div>
-                <div id="messages">
-                    <div id="all-messages"></div>
-                    <br>
-                    <div style="display: flex;">
-                        <input id="message-input">
-                        <button onclick="sendTextMessage()">Отправить</button>
-                    </div>
-                   
-                </div>
+               
             </div>
             
-            <div id="bottom-container" >
-                <nav>
-                    <ul>
-                        <li onclick="switchTab('bottom', 'mixer')">Звук</li>
-                        <li onclick="switchTab('bottom', 'whiteboard')">Доска</li>
-                    </ul>
-                </nav>
-                <div class="bottom tab" id="mixer" >
-                    ---------
-                </div>
-                <div class="bottom tab" id="whiteboard" >
-                    ---------
-                </div>
+            
+            
+            
+            <div id="mixer">
+                ---------
             </div>
 
+            <div id="whiteboard">
+                <canvas></canvas>
+            </div>
+        
+
+        
            
         </div>
 
@@ -72,6 +68,7 @@
 
         <!--Настройки-->
         <div class="page tab" id="settings">
+            <div>
             <label for="name-input" style="margin: 5px;">Имя:</label><br>
             <input type="text" id="name-input" style="margin: 5px; width: 240px;"><br>
             
@@ -81,7 +78,9 @@
             <canvas id="image-preview" ></canvas><br>
             
             <input id="image-input" type="file" style="display: none;" oninput="addIcon(this.files[0])"><br>
-            <button onclick="saveSettings();">Сохранить</button>
+            <button onclick="saveSettings();switchTab('page', 'home')">Сохранить</button>
+            <button onclick="switchTab('page', 'home')">Отмена</button>
+            </div>
         </div>
     </div>
 

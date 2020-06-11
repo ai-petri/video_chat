@@ -61,15 +61,17 @@ class UserList extends HTMLElement
         {
             let item = document.createElement("li");
             item.innerHTML =
-            `          
-            <img src="${user.image? user.image : 'default_icon.svg'}">
+            `
             <input type="checkbox">
+            <img src="${user.image? user.image : 'default_icon.svg'}">
+            ${user.name}
+
             `
             if(user == selected)
             {
                 item.classList.add("selected");
             }
-            item.querySelector("img").onclick = e => 
+            item.onclick = e => 
             {
                 if (this.selected === user) return;
                 
@@ -124,38 +126,12 @@ class UserList extends HTMLElement
     {
         
         this.ul.innerHTML = "";
-        for(let i=0; i<this.capacity & i<this.items.length; i++)
+        for(let i=0; i<this.items.length; i++)
         {   
-
-            let n = i + this.itemOffset;
-            while(n>this.items.length - 1)
-            {
-                n -= this.items.length;
-            }
-            while(n<0)
-            {
-                n += this.items.length;
-            }
-               
-            this.ul.appendChild(this.items[n]);
-                  
+            this.ul.appendChild(this.items[i]);                 
         }
-
     }
 
-    showNext()
-    {        
-        this.itemOffset += 1;
-        this.updateList();
-    }
-
-    showPrevious()
-    {       
-        this.itemOffset -= 1;
-        this.updateList();
-    }
-   
-    
     connectedCallback()
     {
         var shadow = this.attachShadow({mode:"open"});
@@ -166,8 +142,8 @@ class UserList extends HTMLElement
             input[type=checkbox]
 		    {
                 opacity: 0;
-                margin: 0;
-                position: absolute; 
+                margin: -5px;
+                vertical-align: top;               
             }
             input[type=checkbox]:checked
 		    {
@@ -175,54 +151,37 @@ class UserList extends HTMLElement
 		    }
             img
             {
-                height: 40px;
-                width: 40px; 
+                height: 25px;
+                width: 25px; 
+                
                 object-fit: cover;
                 border-radius: 50%;
+                vertical-align: middle;
             }        
             ul
             {
                 list-style-type: none;
                 margin: 0;
                 padding: 0;
-                margin-bottom: 15px;
-                display: inline-block;
                 vertical-align: middle;
-                width:70%;
-                height: 40px;
             }
             li
             {
                 cursor: pointer;
-                display: inline-block;
-                margin: 0px;
-                padding: 10px;
-                border: 1px solid rgba(0,0,0,0);
+                padding: 10px 30px 10px 10px;
+                color: grey;
             }
             li:hover > input[type=checkbox]
             {
                 opacity: 1;
             }
-            button
-            {
-                display: inline-block;
-                width: 10%;
-                background-color: rgba(0,0,0,0);
-                border: none;
-                margin: 0;
-                cursor:pointer;
-            }
             .selected
             {
                 background: lightgrey;
+                color: black;
             }
         </style>
-
-
-        <button onclick="this.parentNode.host.showPrevious()">◄</button>
         <ul></ul>
-        <button onclick="this.parentNode.host.showNext()">►</button>
-        
         `
         this.ul = shadow.querySelector("ul");
     }

@@ -15,11 +15,14 @@
         body
         {
             margin: 0;
-        }
+            background-color: rgb(240,240,240);
 
+        }
         header
         {
             height: 70px;
+            background-color: white;
+            margin: 0;
         }
         #user
         {
@@ -77,8 +80,9 @@
         {
             position: absolute;    
             width: 200px;
+            margin: 20px;
             z-index: 2;
-            bottom: 0;
+            top: 0;
             right: 0;
         }
         #remote-video
@@ -111,29 +115,34 @@
         /*-------------------------------*/
         #users
         {
-            overflow: hidden;
+            /* overflow-y: scroll; */
+            /* background-color: lightgrey; */
+            /* width: 80%;           */
+            /* margin-top: 10px;
+            padding: 10px; */
             background-color: white;
-            width: 80%;          
-            margin-top: 10px;
-            padding: 10px;
+            /* box-shadow: 0 0 5px 0 grey; */
         }
 
         #messages
         {
-            width: 80%;
+            /* width: 80%; */
             background-color: white;
             padding: 10px;
+            grid-area: messages;
+            /* box-shadow: 0 0 5px 0 grey; */
         }
         #all-messages
         {
             background-color: lightgrey;
-            height: 300px;
+            height: 90%;
             overflow: auto;
         }
         #message-input
         {
             resize: none; 
-            height: 40px;
+            height: 30px;
+            border: 1px solid grey;
             width: 80%;
             padding-left:12pt;
             font-size:12pt;
@@ -145,20 +154,62 @@
         }
         /*-------------------------------*/
         
-        #main
+        #home
         {
-            background-color: rgb(50,50,50);
+            padding: 20px;
             justify-items: stretch;
             display: grid;
-            grid-template-areas: 
-            "calls users"
-            "calls messages";
-            grid-template-columns: auto max(30%, 50vh);;
-            grid-template-rows: 20% 80%;
-            gap: 10px;
-            padding-bottom: 40px;
+            grid-template-areas:
+            " calls calls whiteboard messages" 
+            " users mixer mixer mixer ";
+           
+            height: 100%;
+            grid-template-columns:  auto  1fr  1fr auto ;
+           grid-template-rows: 2fr 1fr;
+            gap: 20px;
         }
-       
+
+        #mixer
+        {
+            grid-area: mixer;
+            background-color: white;
+        }
+
+        #whiteboard
+        {
+            grid-area: whiteboard;
+            position: relative;
+            background-color: white;
+           
+        }
+        @media (max-width: 1200px) {
+            #home
+            {
+                grid-template-areas:
+                " calls calls messages" 
+                " users mixer mixer ";
+            
+                height: 100%;
+                grid-template-columns:  auto 1fr auto ;
+                grid-template-rows: 2fr 1fr;
+            }
+            #whiteboard
+            {
+                display: none;
+            }
+            
+        }
+        #whiteboard>canvas
+        {
+            border: 1px solid grey;
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            cursor: crosshair;
+        }
         .container > *
         {
             margin: 20px;
@@ -186,13 +237,22 @@
         #calls
         {
             grid-area: calls;
+            background-color: rgb(50,50,50);
+            position: relative;
         }
         
         .container
         {
             position: absolute;
-            width: 100%;
-            
+            width: 95%;
+            height: 80%;            
+        }
+
+        #settings>div
+        {
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%);
         }
 
         
