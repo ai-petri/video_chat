@@ -13,7 +13,11 @@
 
         var messageInput = document.querySelector("#message-input");
 
+        var mixer = document.querySelector("#mixer");
+
         var selected;
+
+       
         
         var userList = document.querySelector("user-list");
         userList.addEventListener("selected", e=>
@@ -30,6 +34,7 @@
             }
         });
         
+
 
         
 
@@ -94,6 +99,10 @@
                        let u = userList.getUserById(id);
                        u.removeEventListener("connected", connectionEventHandler);                
                        u.removeEventListener("disconnected", connectionEventHandler);
+                       if(u.audioChannel)
+                       {
+                           u.audioChannel.parentNode.removeChild(u.audioChannel);
+                       }
                        userList.delete(u);
                     }
                    
@@ -107,6 +116,7 @@
         {
             stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
             localVideo.srcObject = stream;
+            
             localVideo.play();            
             userList.users.forEach(u=>u.localStream = stream);
             
@@ -228,7 +238,22 @@
         {
             if(e.target === selected)
             {
-                loadVideo();
+                loadVideo();               
+            }
+
+
+            
+            if(e.type === "connected" && !e.target.audioChannel)
+            {
+                e.target.audioChannel = new AudioChannel();
+                mixer.appendChild(e.target.audioChannel);
+                e.target.audioChannel.addStream(e.target.remoteStream);
+
+            }
+            if(e.type === "disconnected" && e.target.audioChannel)
+            {        
+                e.target.audioChannel.parentNode.removeChild(e.target.audioChannel);
+                e.target.audioChannel = null;
             }
         }
 

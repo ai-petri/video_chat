@@ -88,9 +88,10 @@
         #remote-video
         {
             position: relative;
-            top: 20px;
+            top: 50%;
             left: 50%;
-            transform: translate(-50%);
+            height: 80%;
+            transform: translateX(-50%) translateY(-50%);
         }
 
 
@@ -165,14 +166,15 @@
            
             height: 100%;
             grid-template-columns:  auto  1fr  1fr auto ;
-           grid-template-rows: 2fr 1fr;
+           grid-template-rows: auto auto;
             gap: 20px;
         }
 
         #mixer
         {
             grid-area: mixer;
-            background-color: white;
+            background-color: rgb(50,50,50);;
+            display: flex;
         }
 
         #whiteboard
