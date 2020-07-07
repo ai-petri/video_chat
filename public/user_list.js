@@ -169,7 +169,8 @@ class UserList extends HTMLElement
             {
                 cursor: pointer;
                 padding: 10px 30px 10px 10px;
-                color: grey;
+               
+                background: white;
             }
             li:hover > input[type=checkbox]
             {
@@ -177,8 +178,7 @@ class UserList extends HTMLElement
             }
             .selected
             {
-                background: lightgrey;
-                color: black;
+                background: lightgreen;
             }
         </style>
         <ul></ul>
