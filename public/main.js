@@ -15,6 +15,8 @@
 
         var mixer = document.querySelector("#mixer");
 
+        var whiteboard = document.querySelector("canvas");
+
         var selected;
 
        
@@ -76,7 +78,7 @@
                     //новое соединение
                    if(!userList.has(userinfo))
                    {                        
-                       let user = new User(stream,sendText,userinfo.id,userinfo.name,userinfo.image);
+                       let user = new User(stream,sendText,whiteboard,userinfo.id,userinfo.name,userinfo.image);
                         
                        user.addEventListener("connected", connectionEventHandler);                
                        user.addEventListener("disconnected", connectionEventHandler);
@@ -149,6 +151,15 @@
                     }
                 );
             }
+
+
+            whiteboard.addEventListener("point", e=>
+            {
+                if(selected && selected.connected)
+                {
+                    selected.dataChannels[0].send(JSON.stringify(e.detail));
+                }
+            });
         }
 
         document.body.onload = init;

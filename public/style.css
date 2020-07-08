@@ -90,7 +90,7 @@
             position: relative;
             top: 50%;
             left: 50%;
-            height: 30vh;
+            height: 100%;
             transform: translateX(-50%) translateY(-50%);
         }
 
@@ -161,18 +161,21 @@
         
         #home
         {
+            background-color: rgb(50, 50, 50);
             padding: 20px;
+            margin-left: 20px;
             justify-items: stretch;
             display: grid;
             grid-template-areas:
-            " users calls   messages" 
-            " whiteboard whiteboard  mixer";
+            " users calls  calls messages" 
+            "mixer whiteboard whiteboard  messages";
            
-            height: 100%;
-            grid-template-columns:  auto  1fr  auto ;
+            
+            overflow: hidden;
+            grid-template-columns:  200px 2fr 1fr 300px ;
            grid-template-rows: 50vh 300px;
            min-width: 650px;
-            gap: 0px;
+            gap: 10px;
         }
 
         #mixer
@@ -180,18 +183,18 @@
             grid-area: mixer;
             background-color: rgb(50,50,50);;
             display: flex;
-            flex-direction: row-reverse;
-
+           
         }
 
         #whiteboard
         {
             grid-area: whiteboard;
             position: relative;
-            background-color: rgb(50,50,50);
+            overflow-x: auto;
+            overflow-y: hidden;
            
         }
-        @media (max-width: 600px) {
+        @media (max-width: 800px) {
             #home
             {
                 grid-template-areas:
@@ -211,12 +214,7 @@
         #whiteboard>canvas
         {
             background-color: black;
-            position: absolute;
-            width: 90%;
-            height: 90%;
-            left: 50%;
-            top: 50%;
-            transform: translateX(-50%) translateY(-50%);
+ 
             cursor: crosshair;
         }
         .container > *
@@ -254,7 +252,7 @@
         {
             position: absolute;
             width: 95%;
-            height: 80%;            
+            height: 100%;            
         }
 
         #settings>div

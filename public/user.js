@@ -9,7 +9,7 @@ class User extends EventTarget
             name;
             image;
                   
-            constructor(stream, sendText, id, name, image)
+            constructor(stream, sendText, whiteboard, id, name, image)
             {
                 super();
                 this.initConnection();
@@ -18,6 +18,7 @@ class User extends EventTarget
                 this.image = image;
                 this.localStream = stream;
                 this.sendText = sendText;
+                this.whiteboard = whiteboard;
             }
 
             initConnection()
@@ -52,10 +53,12 @@ class User extends EventTarget
 
                 this.connection.ondatachannel = e =>
                     {
-                        console.log("ondatachannel");
+                        
                         e.channel.onmessage = e =>
                         {
-                            console.log(e.data);
+                            let {n,x,y} = JSON.parse(e.data);
+                            this.whiteboard.paint(n,x,y);
+
                         }
                         this.dataChannels.push(e.channel);           
                     }
