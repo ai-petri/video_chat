@@ -99,12 +99,12 @@ class User extends EventTarget
             async connect()
             {   
 
-                var dataChannel = this.connection.createDataChannel("channel");
-                dataChannel.onmessage = e =>
+                this.createDataChannel("channel",  e =>
                 {
-                    console.log(e.data);
-                }
-                this.dataChannels.push(dataChannel);
+                    let {n,x,y} = JSON.parse(e.data);
+                    this.whiteboard.paint(n,x,y);
+
+                });
 
                 this.localStream.getTracks().forEach(track=>this.connection.addTrack(track));
                 var offer = await this.connection.createOffer();
@@ -113,13 +113,10 @@ class User extends EventTarget
                 this.sendObject(offer);
             }
 
-            createDataChannel(name)
+            createDataChannel(name, onmessage)
             {         
                 var dataChannel = this.connection.createDataChannel(name);
-                dataChannel.onmessage = e =>
-                {
-                    console.log(e.data);
-                }
+                dataChannel.onmessage = onmessage
                 this.dataChannels.push(dataChannel); 
             }
 
