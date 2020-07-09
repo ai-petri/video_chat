@@ -66,7 +66,7 @@ class AudioChannel extends HTMLElement
             -webkit-appearance: slider-vertical;
            display: inline-block;
            background: rgba(0,0,0,0);
-           height: 150px;
+           height: 120px;
         }
         input[type=range]::-moz-range-thumb 
         {

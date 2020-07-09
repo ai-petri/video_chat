@@ -35,7 +35,7 @@ class WhiteboardCanvas extends HTMLCanvasElement
     {
 		
 		
-		this.context.strokeStyle = "#FFFFFF";
+		this.context.strokeStyle = "#000000";
 
 		
 		this.addEventListener("mousedown", e =>
