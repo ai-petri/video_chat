@@ -13,7 +13,7 @@
 
         var messageInput = document.querySelector("#message-input");
 
-        var mixer = document.querySelector("#mixer");
+        var mixer = document.querySelector("#input-mixer");
 
         var whiteboard = document.querySelector("canvas");
 
@@ -116,7 +116,18 @@
         
         async function init()
         {
-            stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
+            let audioChannel = new AudioChannel({quiet: true});
+            document.querySelector("#output-mixer").appendChild(audioChannel);
+
+
+            let cameraStream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
+            let videoTrack = cameraStream.getVideoTracks()[0];
+            let audioTrack = cameraStream.getAudioTracks()[0];
+ 
+            
+            audioChannel.addTrack(audioTrack);
+            
+            stream = new MediaStream([videoTrack, audioChannel.track]);
             localVideo.srcObject = stream;
             
             localVideo.play();            

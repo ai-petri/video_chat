@@ -173,12 +173,12 @@
             justify-items: stretch;
             display: grid;
             grid-template-areas:
-            " users calls  calls messages" 
-            "mixer whiteboard whiteboard  messages";
+            " users calls  messages" 
+            "mixer whiteboard  messages";
            
             
             overflow: hidden;
-            grid-template-columns:  200px 2fr 1fr 400px ;
+            grid-template-columns:  200px 1fr 400px ;
            grid-template-rows: 50vh 300px;
            min-width: 650px;
             gap: 10px;
@@ -187,11 +187,39 @@
         #mixer
         {
             grid-area: mixer;
+            display: grid;
+            grid-template-areas:
+            "label1 label2"
+            "mixer1 mixer2";
+            grid-template-columns: auto 1fr;
+            grid-template-rows: auto 1fr; 
+            gap: 5px;                                  
+        }
+        .mixer-board
+        {
             overflow-x: scroll;
             overflow-y: hidden;
             background-color: grey;
             display: flex;
-           
+        }
+        #output-mixer
+        {
+            grid-area: mixer1;
+        }
+        #input-mixer
+        {
+            grid-area: mixer2;
+        }
+        #output-mixer-label
+        {
+            grid-area: label1;
+            color: grey;
+        }
+        #input-mixer-label
+        {
+            grid-area: label2;
+            color: grey;
+            text-align: center;
         }
 
         #whiteboard

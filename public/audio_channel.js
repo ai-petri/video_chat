@@ -12,7 +12,7 @@ class AudioChannel extends HTMLElement
     volume1 = 1;
     volume2 = 1;
 
-    constructor()
+    constructor(parameters)
     {
         super();
 
@@ -40,7 +40,13 @@ class AudioChannel extends HTMLElement
 
         this.gain = this.audioContext.createGain();
         this.gain.connect(this.processor);
-        this.gain.connect(this.audioContext.destination);
+        if(!parameters || !parameters.quiet)
+        {
+            this.gain.connect(this.audioContext.destination);
+        }
+       
+        this.destinationNode = this.audioContext.createMediaStreamDestination();
+        this.gain.connect(this.destinationNode);
     }
 
     addStream(stream)
@@ -49,7 +55,16 @@ class AudioChannel extends HTMLElement
         source.connect(this.gain);                     
     }
     
-    
+    addTrack(track)
+    {
+        var source = this.audioContext.createMediaStreamTrackSource(track);
+        source.connect(this.gain);
+    }
+
+    get track()
+    {
+        return this.destinationNode.stream.getAudioTracks()[0];
+    }
     
 
     connectedCallback()
