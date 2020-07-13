@@ -1,9 +1,98 @@
+class SimpleKnob extends HTMLElement
+	{
+		constructor()
+		{
+			super();
+
+			this.angle = 0;
+		}
+
+		get value()
+		{
+			return this.angle/120.0;
+		}
+
+        mouseUpHandler = e =>
+        {
+            this.isDown = false;
+            this.y = 0;
+        }
+
+        mouseMoveHandler = e =>
+        {
+            if(this.isDown)
+				{
+					let dy = e.clientY - this.y;
+					let angle = this.angle - dy;
+					if(angle>-120 && angle<120)
+					{
+						this.angle = angle;
+						this.shadowRoot.children[0].style.transform = `rotate(${this.angle}deg)`;
+						this.dispatchEvent(new Event("input"))
+					}
+					
+				}
+        }
+		connectedCallback()
+		{
+			let root = this.attachShadow({mode: "open"});
+			root.innerHTML =
+			
+			`
+			<svg width="20px" height="20px" style="transform:rotate(0deg); display:block">
+			<circle r="8" cx="10" cy="10" stroke="rgb(0,0,0)" fill="rgba(0,0,0,0)" stroke-width="2"></circle>
+			<line x1="10" y1="10" x2="10" y2="2" stroke="rgb(0,0,0)" stroke-width="1"></line>
+			</svg>`
+
+			
+			this.onmousedown = e =>
+			{
+				this.isDown = true;
+				this.y = e.clientY;
+            }
+            
+            this.onwheel = e =>
+            {
+                e.preventDefault();
+                
+                let angle = this.angle - e.deltaY;
+                if(angle>-120 && angle<120)
+                {
+                    this.angle = angle;
+                    this.shadowRoot.children[0].style.transform = `rotate(${this.angle}deg)`;
+                    this.dispatchEvent(new Event("input"));
+                }               
+            }
+            this.ondblclick = e =>
+            {
+                this.angle = 0;
+                this.shadowRoot.children[0].style.transform = `rotate(${this.angle}deg)`;
+                this.dispatchEvent(new Event("input"));
+            }
+			addEventListener("mouseup", this.mouseUpHandler);
+			addEventListener("mousemove", this.mouseMoveHandler);
+        }
+        
+        disconnectedCallback()
+        {
+            removeEventListener("mouseup", this.mouseUpHandler);
+			removeEventListener("mousemove", this.mouseMoveHandler);
+        }
+		
+	}
+
+	customElements.define("simple-knob", SimpleKnob);
+
+
+
 class AudioChannel extends HTMLElement
 {
 
     canvas = document.createElement("canvas");
     
     input = document.createElement("input");
+
+    knob = new SimpleKnob();
 
     audioContext = new AudioContext();
 
@@ -38,7 +127,9 @@ class AudioChannel extends HTMLElement
             this.volume2 = (this.volume2 + Math.floor(1000*Math.sqrt(sum2/buffer2.length)))/2;                    
         }
 
+        this.panner = this.audioContext.createStereoPanner();        
         this.gain = this.audioContext.createGain();
+        this.panner.connect(this.gain);
         this.gain.connect(this.processor);
         if(!parameters || !parameters.quiet)
         {
@@ -52,13 +143,13 @@ class AudioChannel extends HTMLElement
     addStream(stream)
     {
         var source = this.audioContext.createMediaStreamSource(stream);
-        source.connect(this.gain);                     
+        source.connect(this.panner);                     
     }
     
     addTrack(track)
     {
         var source = this.audioContext.createMediaStreamTrackSource(track);
-        source.connect(this.gain);
+        source.connect(this.panner);
     }
 
     get track()
@@ -81,7 +172,8 @@ class AudioChannel extends HTMLElement
             -webkit-appearance: slider-vertical;
            display: inline-block;
            background: rgba(0,0,0,0);
-           height: 120px;
+           height: 100px;
+           margin-top: 10px;
         }
         input[type=range]::-moz-range-thumb 
         {
@@ -105,7 +197,13 @@ class AudioChannel extends HTMLElement
         this.canvas.height = 100;
         this.canvas.style.background = "black";
         shadow.appendChild(this.canvas);
-        shadow.innerHTML += "<br><br>";
+        this.knob.oninput = e =>
+        {
+            this.panner.pan.setValueAtTime(this.knob.value, this.audioContext.currentTime);
+        }
+        shadow.appendChild(this.knob);
+        
+
         this.input.type = "range";
         this.input.min = 0;
         this.input.max = 1;
