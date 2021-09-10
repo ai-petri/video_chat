@@ -19,6 +19,6 @@
   "homepage": "https://github.com/ai-petri/video_chat#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "ws": "^7.2.5"
+    "ws": "^7.5.5"
   }
 }
