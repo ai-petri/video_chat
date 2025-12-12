@@ -116,6 +116,11 @@
         
         async function init()
         {
+            await new Promise(resolve=>
+            {
+                document.body.addEventListener("click",resolve,{once:true});
+            });
+            
             let audioChannel = new AudioChannel({quiet: true});
             document.querySelector("#output-mixer").appendChild(audioChannel);
 
